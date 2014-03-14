@@ -3,6 +3,8 @@ import time
 from matplotlib.pylab import subplots,close
 from matplotlib import cm
 
+matplotlib.use('TkAgg')
+
 def randomwalk(dims=(256,256),n=20,sigma=5,alpha=0.95,seed=1):
     """ A simple random walk with memory """
 

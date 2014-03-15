@@ -1,67 +1,59 @@
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import numpy as np
-import time
-import matplotlib.pyplot as mplpp
-from matplotlib.pylab import subplots,close
-from matplotlib import cm
+from mpl_toolkits.mplot3d import Axes3D
 
-mplpp.switch_backend('TkAgg')  
+plt.switch_backend('TkAgg')
 
-def randomwalk(dims=(256,256,256),n=1,sigma=5,alpha=0.95,seed=1):
-    """ A simple random walk with memory """
+FLOOR = -10
+CEILING = 10
 
-    r,c,d = dims
-    gen = np.random.RandomState(seed)
-    pos = gen.rand(3,n)*((r,),(c,),(d,))
-    old_delta = gen.randn(3,n)*sigma
+class AnimatedScatter(object):
+    def __init__(self, numpoints=1):
+        self.numpoints = numpoints
+        self.stream = self.data_stream()
+        self.angle = 0
 
-    while 1:
+        self.fig = plt.figure()
+        self.fig.canvas.mpl_connect('draw_event',self.forceUpdate)
+        self.ax = self.fig.add_subplot(111,projection = '3d')
+        self.ani = animation.FuncAnimation(self.fig, self.update, interval=100,
+                                   init_func=self.setup_plot, frames=20)
 
-        delta = (1.-alpha)*gen.randn(3,n)*sigma + alpha*old_delta
-        pos += delta
-        for ii in xrange(n):
-            if not (0. <= pos[0,ii] < r) : pos[0,ii] = abs(pos[0,ii] % r)
-            if not (0. <= pos[1,ii] < c) : pos[1,ii] = abs(pos[1,ii] % c)
-            if not (0. <= pos[2,ii] < d) : pos[2,ii] = abs(pos[2,ii] % d)
-        old_delta = delta
-        yield pos
+    def change_angle(self):
+        self.angle = (self.angle + 1)%360
 
-def run(niter=1000,doblit=True):
-    """
-    Visualise the simulation using matplotlib, using blit for 
-    improved speed
-    """
+    def forceUpdate(self, event):
+        self.scat.changed()
 
-    fig,ax = subplots(1,1)
-    ax.set_aspect('equal')
-    ax.set_xlim(0,255)
-    ax.set_ylim(0,255)
-    ax.hold(True)
-    rw = randomwalk()
-    x,y,z = rw.next()
-    fig.canvas.draw()
+    def setup_plot(self):
+        X = next(self.stream)
+        c = ['b', 'r', 'g', 'y', 'm']
+        self.scat = self.ax.scatter(X[:,0], X[:,1], X[:,2] , c=c, s=200)
 
-    # cache the background
-    background = fig.canvas.copy_from_bbox(ax.bbox)
-    
-    plt = ax.plot(x,y,'o')[0]
-    #Axes3D.scatter
-    tic = time.time()
+        self.ax.set_xlim3d(FLOOR, CEILING)
+        self.ax.set_ylim3d(FLOOR, CEILING)
+        self.ax.set_zlim3d(FLOOR, CEILING)
 
-    for ii in xrange(niter):
+        return self.scat,
 
-        # update the xy data
-        x,y,z = rw.next()
-        #Axes3D.scatter
-        plt.set_data(x,y)
-        
-        # restore background
-        fig.canvas.restore_region(background)
-        
-        # redraw just the points
-        ax.draw_artist(plt)
-        
-        # fill in the axes rectangle
-        fig.canvas.blit(ax.bbox)
-        
-    close(fig)
-    print("Average FPS: %.2f" %(niter/(time.time()-tic)))
+    def data_stream(self):
+        data = np.zeros(( self.numpoints , 3 ))
+        xyz = data[:,:3]
+        while True:
+            xyz += 2 * (np.random.random(( self.numpoints,3)) - 0.5)
+            print xyz
+            print "**********************"
+            yield data
+
+    def update(self, i):
+        data = next(self.stream)
+        self.scat._offsets3d = ( np.ma.ravel(data[:,0]) , np.ma.ravel(data[:,1]) , np.ma.ravel(data[:,2]) )
+        return self.scat,
+
+    def show(self):
+        plt.show()
+
+if __name__ == '__main__':
+    a = AnimatedScatter()
+    a.show()

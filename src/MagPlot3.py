@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d.axes3d as p3
 import matplotlib.animation as animation
 
-plt.switch_backend('TkAgg') 
+#plt.switch_backend('TkAgg')
 
 def Gen_RandLine(length, dims=1) :
     """
@@ -28,19 +28,24 @@ def Gen_RandLine(length, dims=1) :
     return lineData
 
 def update_lines(num, dataLines, lines) :
-    for line, data in zip(lines, dataLines) :
-        # NOTE: there is no .set_data() for 3 dim data...
-        #print(data[0:3,:num])
-        line.set_data(data[0:2,:num])
-        line.set_3d_properties(data[2,:num])
-    return lines
+  print zip(lines,dataLines)
+  print dataLines
+  for line, data in zip(lines, dataLines) :
+    # NOTE: there is no .set_data() for 3 dim data..
+    #line.set_data(data[0:2,num-2:num])
+    #line.set_3d_properties(data[2,num-2:num])
+    print(data[0:2,num-2:num])
+    print(data[2,num-2:num])
+    line.set_data(data[0:2,num-2:num])
+    line.set_3d_properties(data[2,num-2:num])
+  return lines
 
 # Attaching 3D axis to the figure
 fig = plt.figure()
 ax = p3.Axes3D(fig)
 
 # Fifty lines of random 3-D lines
-data = [Gen_RandLine(25, 3) for index in range(50)]
+data = [Gen_RandLine(25, 3) for index in range(1)]
 
 # Creating fifty line objects.
 # NOTE: Can't pass empty arrays into 3d version of plot()
@@ -59,7 +64,7 @@ ax.set_zlabel('Z')
 ax.set_title('3D Test')
 
 # Creating the Animation object
-line_ani = animation.FuncAnimation(fig, update_lines, 25, fargs=(data, lines),
-                                   interval=20, blit=False)
+line_ani = animation.FuncAnimation(fig, update_lines, 5, fargs=(data, lines),
+                                   interval=200, blit=False)
 
 plt.show()

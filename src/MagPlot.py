@@ -1,67 +1,40 @@
+"""
+Simple script to show the position of the XLoBorg sensor chip.
+"""
 import numpy as np
-import time
-import matplotlib.pyplot as mplpp
-from matplotlib.pylab import subplots,close
-from matplotlib import cm
+import matplotlib.pyplot as plt
+import mpl_toolkits.mplot3d.axes3d as p3
+import matplotlib.animation as animation
 
-mplpp.switch_backend('TkAgg')  
+def update_lines(num, axes) :
+  new_axes=[[1,num*0.01,0],[0,1,0],[0,num*0.01,1]]
+  for line, axis in zip(axes, new_axes) :
+    # NOTE: there is no.set_data() for 3 dim data..
+    line.set_data([[0,axis[0]],[0,axis[1]]])
+    line.set_3d_properties([0,axis[2]])
+  return axes
 
-def randomwalk(dims=(256,256,256),n=1,sigma=5,alpha=0.95,seed=1):
-    """ A simple random walk with memory """
+# Attaching 3D axis to the figure
+fig = plt.figure()
+ax = p3.Axes3D(fig)
 
-    r,c,d = dims
-    gen = np.random.RandomState(seed)
-    pos = gen.rand(3,n)*((r,),(c,),(d,))
-    old_delta = gen.randn(3,n)*sigma
+# Creating fifty line objects.
+# NOTE: Can't pass empty arrays into 3d version of plot()
+axes = [ax.plot([0], [0], [0])[0] for index in range(3)]
 
-    while 1:
+# Setting the axes properties
+ax.set_xlim3d([-2.0, 2.0])
+ax.set_xlabel('X')
 
-        delta = (1.-alpha)*gen.randn(3,n)*sigma + alpha*old_delta
-        pos += delta
-        for ii in xrange(n):
-            if not (0. <= pos[0,ii] < r) : pos[0,ii] = abs(pos[0,ii] % r)
-            if not (0. <= pos[1,ii] < c) : pos[1,ii] = abs(pos[1,ii] % c)
-            if not (0. <= pos[2,ii] < d) : pos[2,ii] = abs(pos[2,ii] % d)
-        old_delta = delta
-        yield pos
+ax.set_ylim3d([-2.0, 2.0])
+ax.set_ylabel('Y')
 
-def run(niter=1000,doblit=True):
-    """
-    Visualise the simulation using matplotlib, using blit for 
-    improved speed
-    """
+ax.set_zlim3d([-2.0, 2.0])
+ax.set_zlabel('Z')
 
-    fig,ax = subplots(1,1)
-    ax.set_aspect('equal')
-    ax.set_xlim(0,255)
-    ax.set_ylim(0,255)
-    ax.hold(True)
-    rw = randomwalk()
-    x,y,z = rw.next()
-    fig.canvas.draw()
+ax.set_title('Accelerometer Test')
 
-    # cache the background
-    background = fig.canvas.copy_from_bbox(ax.bbox)
-    
-    plt = ax.plot(x,y,'o')[0]
-    Axes3D.scatter
-    tic = time.time()
+# Creating the Animation object
+line_ani = animation.FuncAnimation(fig, update_lines, 100, fargs=[axes], interval=1, blit=False)
 
-    for ii in xrange(niter):
-
-        # update the xy data
-        x,y,z = rw.next()
-        #Axes3D.scatter
-        plt.set_data(x,y)
-        
-        # restore background
-        fig.canvas.restore_region(background)
-        
-        # redraw just the points
-        ax.draw_artist(plt)
-        
-        # fill in the axes rectangle
-        fig.canvas.blit(ax.bbox)
-        
-    close(fig)
-    print("Average FPS: %.2f" %(niter/(time.time()-tic)))
+plt.show()

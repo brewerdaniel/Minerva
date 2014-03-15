@@ -44,7 +44,7 @@ def run(niter=1000,doblit=True):
     background = fig.canvas.copy_from_bbox(ax.bbox)
     
     plt = ax.plot(x,y,'o')[0]
-    Axes3D.scatter
+    #Axes3D.scatter
     tic = time.time()
 
     for ii in xrange(niter):

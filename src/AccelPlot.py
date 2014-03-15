@@ -7,17 +7,24 @@ import mpl_toolkits.mplot3d.axes3d as p3
 import matplotlib.animation as animation
 
 # Load the XLoBorg library
-import XLoBorg
+#import XLoBorg
 
 # Tell the library to disable diagnostic printouts
-XLoBorg.printFunction = XLoBorg.NoPrint
+#XLoBorg.printFunction = XLoBorg.NoPrint
 
 # Start the XLoBorg module (sets up devices)
-XLoBorg.Init()
+#XLoBorg.Init()
+
+def xyzVals() :
+  x, y, z = [0.5, 0.5, 0.0]#XLoBorg.ReadAccelerometer()
+  vals=[[np.cos(np.pi*x/2),0,np.sin(np.pi*x/2)],
+  [0,np.cos(np.pi*y/2),np.sin(np.pi*y/2)],
+  [-np.sin(np.pi*x/2)*np.cos(np.pi*y/2),-np.sin(np.pi*y/2)*np.cos(np.pi*x/2),np.cos(np.pi*x/2)*np.cos(np.pi*y/2)]]
+  print vals
+  return vals
 
 def update_lines(num, axes) :
-  x, y, z = XLoBorg.ReadAccelerometer()
-  new_axes=[[1,num*0.01,0],[0,1,0],[0,num*0.01,1]]
+  new_axes=xyzVals()
   for line, axis in zip(axes, new_axes) :
     # NOTE: there is no.set_data() for 3 dim data..
     line.set_data([[0,axis[0]],[0,axis[1]]])
@@ -45,6 +52,6 @@ ax.set_zlabel('Z')
 ax.set_title('Accelerometer Test')
 
 # Creating the Animation object
-line_ani = animation.FuncAnimation(fig, update_lines, 100, fargs=[axes], interval=1, blit=False)
+line_ani = animation.FuncAnimation(fig, update_lines, 1, fargs=[axes], interval=100000000, blit=False)
 
 plt.show()

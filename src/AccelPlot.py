@@ -25,7 +25,7 @@ def xyzVals(num) :
       pos/=np.dot(pos,pos)
 
   a, b = [-np.arcsin(pos[1]), np.arcsin(pos[0])]
-  
+
   Rx=[[1,0,0],[0,np.cos(a),-np.sin(a)],[0,np.sin(a),np.cos(a)]]
   Ry=[[np.cos(b),0,np.sin(b)],[0,1,0],[-np.sin(b),0,np.cos(b)]]
   #Rz=[[np.cos(c),-np.sin(c),0],[np.sin(c),np.cos(c),0],[0,0,1]]
@@ -63,6 +63,6 @@ ax.set_zlabel('Z')
 ax.set_title('Accelerometer Test')
 
 # Creating the Animation object
-line_ani = animation.FuncAnimation(fig, update_lines, 100, fargs=[axes], interval=1, blit=False)
+line_ani = animation.FuncAnimation(fig, update_lines, 9999999, fargs=[axes], interval=1, blit=False)
 
 plt.show()

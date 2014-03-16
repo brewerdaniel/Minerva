@@ -16,13 +16,19 @@ XLoBorg.printFunction = XLoBorg.NoPrint
 XLoBorg.Init()
 
 def update_lines(num, axes) :
-  x, y, z = XLoBorg.ReadAccelerometer()
-  new_axes=[[1,num*0.01,0],[0,1,0],[0,num*0.01,1]]
+  vals = XLoBorg.ReadCompasRaw()
+  print np.sqrt(np.dot(vals,vals))
+  vals/=np.sqrt(np.dot(vals,vals))
+  print np.dot(vals,vals)
+  print vals
+  new_axes=[[vals[0],0,0],[0,vals[1],0],[0,0,vals[2]]]
+
   for line, axis in zip(axes, new_axes) :
     # NOTE: there is no.set_data() for 3 dim data..
     line.set_data([[0,axis[0]],[0,axis[1]]])
     line.set_3d_properties([0,axis[2]])
   return axes
+
 
 # Attaching 3D axis to the figure
 fig = plt.figure()
@@ -45,6 +51,6 @@ ax.set_zlabel('Z')
 ax.set_title('Accelerometer Test')
 
 # Creating the Animation object
-line_ani = animation.FuncAnimation(fig, update_lines, 100, fargs=[axes], interval=1, blit=False)
+line_ani = animation.FuncAnimation(fig, update_lines, 999999999, fargs=[axes], interval=1, blit=False)
 
 plt.show()

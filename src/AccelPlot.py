@@ -7,19 +7,19 @@ import mpl_toolkits.mplot3d.axes3d as p3
 import matplotlib.animation as animation
 
 # Load the XLoBorg library
-#import XLoBorg
+import XLoBorg
 
 # Tell the library to disable diagnostic printouts
-#XLoBorg.printFunction = XLoBorg.NoPrint
+XLoBorg.printFunction = XLoBorg.NoPrint
 
 # Start the XLoBorg module (sets up devices)
-#XLoBorg.Init()
-initPos=[0,0,0.9]#XLoBorg.ReadAccelerometer()
+XLoBorg.Init()
+initPos=XLoBorg.ReadAccelerometer()
 
 O=[[1,0,0],[0,1,0],[0,0,1]]
 
 def xyzVals(num) :
-  pos = [0.0, 0.4, 0.6]#XLoBorg.ReadAccelerometer()
+  pos = XLoBorg.ReadAccelerometer()
 
   if (np.dot(pos,pos)>1) :
       pos/=np.dot(pos,pos)

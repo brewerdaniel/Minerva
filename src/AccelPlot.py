@@ -14,17 +14,28 @@ import matplotlib.animation as animation
 
 # Start the XLoBorg module (sets up devices)
 #XLoBorg.Init()
+initPos=[0,0,0.9]#XLoBorg.ReadAccelerometer()
 
-def xyzVals() :
-  x, y, z = [0.5, 0.5, 0.0]#XLoBorg.ReadAccelerometer()
-  vals=[[np.cos(np.pi*x/2),0,np.sin(np.pi*x/2)],
-  [0,np.cos(np.pi*y/2),np.sin(np.pi*y/2)],
-  [-np.sin(np.pi*x/2)*np.cos(np.pi*y/2),-np.sin(np.pi*y/2)*np.cos(np.pi*x/2),np.cos(np.pi*x/2)*np.cos(np.pi*y/2)]]
-  print vals
+O=[[1,0,0],[0,1,0],[0,0,1]]
+
+def xyzVals(num) :
+  pos = [0.0, 0.4, 0.6]#XLoBorg.ReadAccelerometer()
+
+  if (np.dot(pos,pos)>1) :
+      pos/=np.dot(pos,pos)
+
+  a, b = [-np.arcsin(pos[1]), np.arcsin(pos[0])]
+  
+  Rx=[[1,0,0],[0,np.cos(a),-np.sin(a)],[0,np.sin(a),np.cos(a)]]
+  Ry=[[np.cos(b),0,np.sin(b)],[0,1,0],[-np.sin(b),0,np.cos(b)]]
+  #Rz=[[np.cos(c),-np.sin(c),0],[np.sin(c),np.cos(c),0],[0,0,1]]
+
+  vals=np.dot(np.dot(O,Rx),Ry)
+
   return vals
 
 def update_lines(num, axes) :
-  new_axes=xyzVals()
+  new_axes=xyzVals(num)
   for line, axis in zip(axes, new_axes) :
     # NOTE: there is no.set_data() for 3 dim data..
     line.set_data([[0,axis[0]],[0,axis[1]]])
@@ -52,6 +63,6 @@ ax.set_zlabel('Z')
 ax.set_title('Accelerometer Test')
 
 # Creating the Animation object
-line_ani = animation.FuncAnimation(fig, update_lines, 1, fargs=[axes], interval=100000000, blit=False)
+line_ani = animation.FuncAnimation(fig, update_lines, 100, fargs=[axes], interval=1, blit=False)
 
 plt.show()

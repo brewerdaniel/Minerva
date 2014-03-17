@@ -6,20 +6,24 @@ import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d.axes3d as p3
 import matplotlib.animation as animation
 
-# Load the XLoBorg library
-import XLoBorg
-
-# Tell the library to disable diagnostic printouts
-XLoBorg.printFunction = XLoBorg.NoPrint
-
-# Start the XLoBorg module (sets up devices)
-XLoBorg.Init()
-initPos=XLoBorg.ReadAccelerometer()
+import socket               # Import socket module
+import struct
 
 O=[[1,0,0],[0,1,0],[0,0,1]]
 
+def netRec() :
+  s = socket.socket()         # Create a socket object
+  host = '10.0.1.4'#socket.gethostname() # Get local machine name
+  port = 12345                # Reserve a port for your service.
+
+  s.connect((host, port))
+  data = s.recv(1024)
+  s.close                     # Close the socket when done
+  return struct.unpack('f'*3, data)
+
+
 def xyzVals(num) :
-  pos = XLoBorg.ReadAccelerometer()
+  pos = netRec()
 
   if (np.dot(pos,pos)>1) :
       pos/=np.dot(pos,pos)

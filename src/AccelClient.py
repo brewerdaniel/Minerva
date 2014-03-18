@@ -5,10 +5,13 @@ import struct
 
 s = socket.socket()         # Create a socket object
 host = 'djb231.quns.cam.ac.uk'#socket.gethostname() # Get local machine name
-port = 12345                # Reserve a port for your service.
-
+port = 12345                # Reserve a port for your service
 s.connect((host, port))
-data=s.recv(1024)
-s.close                     # Close the socket when done
+for x in range(1000) :
+    s.send("Hey")
+    data=s.recv(1024)
+    print struct.unpack('f'*(len(data)/4), data)
 
-print struct.unpack('f'*(len(data)/4), data)
+s.send("")
+
+s.close                     # Close the socket when done

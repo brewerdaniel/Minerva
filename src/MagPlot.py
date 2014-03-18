@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 Simple script to show the position of the XLoBorg sensor chip.
 """
@@ -6,17 +8,23 @@ import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d.axes3d as p3
 import matplotlib.animation as animation
 
-# Load the XLoBorg library
-import XLoBorg
+import socket               # Import socket module                                                                           
+import struct
 
-# Tell the library to disable diagnostic printouts
-XLoBorg.printFunction = XLoBorg.NoPrint
+O=[[1,0,0],[0,1,0],[0,0,1]]
 
-# Start the XLoBorg module (sets up devices)
-XLoBorg.Init()
+s = socket.socket()         # Create a socket object 
+host = 'djb231.quns.cam.ac.uk'
+port = 12345                # Reserve a port for your service.
+s.connect((host, port))
+
+def netRec() :
+  s.send("mag")
+  data = s.recv(1024)
+  return struct.unpack('f'*(len(data)/4), data)
 
 def update_lines(num, axes) :
-  vals = XLoBorg.ReadCompasRaw()
+  vals = netRec()
   print np.sqrt(np.dot(vals,vals))
   vals/=np.sqrt(np.dot(vals,vals))
   print np.dot(vals,vals)
@@ -48,9 +56,12 @@ ax.set_ylabel('Y')
 ax.set_zlim3d([-2.0, 2.0])
 ax.set_zlabel('Z')
 
-ax.set_title('Accelerometer Test')
+ax.set_title('Magnetometer Test')
 
 # Creating the Animation object
 line_ani = animation.FuncAnimation(fig, update_lines, 999999999, fargs=[axes], interval=1, blit=False)
 
 plt.show()
+
+s.send("")
+s.close

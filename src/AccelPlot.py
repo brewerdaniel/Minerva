@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 Simple script to show the position of the XLoBorg sensor chip.
 """
@@ -11,15 +13,16 @@ import struct
 
 O=[[1,0,0],[0,1,0],[0,0,1]]
 
-def netRec() :
-  s = socket.socket()         # Create a socket object
-  host = 'djb231.quns.cam.ac.uk'#socket.gethostname() # Get local machine name
-  port = 12345                # Reserve a port for your service.
+s = socket.socket()         # Create a socket object                                                                                      
+host = 'djb231.quns.cam.ac.uk'#socket.gethostname() # Get local machine name                                                              
+port = 12345                # Reserve a port for your service.                                                                            
 
-  s.connect((host, port))
+s.connect((host, port))
+
+def netRec() :
+  s.send("accel")
   data = s.recv(1024)
-  s.close                     # Close the socket when done
-  return struct.unpack('f'*3, data)
+  return struct.unpack('f'*(len(data)/4), data)
 
 
 def xyzVals(num) :
@@ -70,3 +73,6 @@ ax.set_title('Accelerometer Test')
 line_ani = animation.FuncAnimation(fig, update_lines, 9999999, fargs=[axes], interval=1, blit=False)
 
 plt.show()
+
+s.send("")
+s.close                     # Close the socket when done 

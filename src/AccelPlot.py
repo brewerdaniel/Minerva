@@ -13,7 +13,7 @@ O=[[1,0,0],[0,1,0],[0,0,1]]
 
 def netRec() :
   s = socket.socket()         # Create a socket object
-  host = '10.0.1.4'#socket.gethostname() # Get local machine name
+  host = 'djb231.quns.cam.ac.uk'#socket.gethostname() # Get local machine name
   port = 12345                # Reserve a port for your service.
 
   s.connect((host, port))

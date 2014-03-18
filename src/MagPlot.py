@@ -25,10 +25,7 @@ def netRec() :
 
 def update_lines(num, axes) :
   vals = netRec()
-  print np.sqrt(np.dot(vals,vals))
   vals/=np.sqrt(np.dot(vals,vals))
-  print np.dot(vals,vals)
-  print vals
   new_axes=[[vals[0],0,0],[0,vals[1],0],[0,0,vals[2]]]
 
   for line, axis in zip(axes, new_axes) :

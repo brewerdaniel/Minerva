@@ -30,8 +30,8 @@ def update_lines(num, axes) :
 
   for line, axis in zip(axes, new_axes) :
     # NOTE: there is no.set_data() for 3 dim data..
-    line.set_data([[0,axis[0]],[0,axis[1]]])
-    line.set_3d_properties([0,axis[2]])
+    line.set_data([[0,vals[0]],[0,vals[1]]])
+    line.set_3d_properties([0,vals[2]])
   return axes
 
 

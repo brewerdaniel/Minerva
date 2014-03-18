@@ -59,7 +59,7 @@ ax.set_zlabel('Z')
 ax.set_title('Magnetometer Test')
 
 # Creating the Animation object
-line_ani = animation.FuncAnimation(fig, update_lines, 999999999, fargs=[axes], interval=1, blit=False)
+line_ani = animation.FuncAnimation(fig, update_lines, 1000, fargs=[axes], interval=1, blit=False)
 
 plt.show()
 

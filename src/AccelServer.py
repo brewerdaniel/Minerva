@@ -2,6 +2,8 @@
 
 import socket               # Import socket module
 import struct
+import time
+import math
 
 # Load the XLoBorg library
 import XLoBorg
@@ -22,6 +24,12 @@ while True:
    c, addr = s.accept()     # Establish connection with client.
    #print 'Got connection from', addr, c
    data = XLoBorg.ReadAccelerometer()
+   time.sleep(0.0125)
+   data=[x + y for x, y in zip(data, XLoBorg.ReadAccelerometer())]
+   time.sleep(0.0125)
+   data=[x + y for x, y in zip(data, XLoBorg.ReadAccelerometer())]
+   data=[x/3 for x in data]
    buf = struct.pack('f'*len(data), *data)
-   c.send(buf)
-   c.close()                # Close the connection
+   c.sendall(buf)
+   
+c.close()                # Close the connection

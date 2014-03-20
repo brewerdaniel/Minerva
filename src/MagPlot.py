@@ -18,13 +18,30 @@ host = 'djb231.quns.cam.ac.uk'
 port = 12345                # Reserve a port for your service.
 s.connect((host, port))
 
+iter=0
+
 def netRec() :
   s.send("mag")
   data = s.recv(1024)
   return struct.unpack('f'*(len(data)/4), data)
 
+averageHeading=netRec()
+
 def update_lines(num, axes) :
-  vals = netRec()
+  vals = list(netRec())
+  print vals
+  global averageHeading
+  global iter
+  #iter+=1
+  for i in range(3) :
+  #  average*=(iter-1)
+  #  average+=current
+  #  average/=iter
+    vals[i]-=averageHeading[i]
+    print vals[i], " ", averageHeading[i]
+
+  print vals
+  print "************************"
   vals/=np.sqrt(np.dot(vals,vals))
   new_axes=[[vals[0],0,0],[0,vals[1],0],[0,0,vals[2]]]
 

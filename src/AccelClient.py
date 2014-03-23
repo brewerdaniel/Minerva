@@ -10,7 +10,13 @@ s.connect((host, port))
 for x in range(1000) :
     s.send("accel")
     data=s.recv(1024)
-    print struct.unpack('f'*(len(data)/4), data)
+    accel=struct.unpack('f'*(len(data)/4), data)
+
+    s.send("mag")
+    data=s.recv(1024)
+    mag=struct.unpack('f'*(len(data)/4), data)
+
+    print "X: ",accel[0]," Y: ",accel[1]," Z: ",accel[2]," mX: ",mag[0]," mY: ",mag[1]," mZ: ",mag[2]
 
 s.send("")
 

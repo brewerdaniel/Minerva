@@ -9,6 +9,7 @@ import sys
 
 # Initialise the socket
 s = socket.socket()
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 host = ''
 port = 12345
 
@@ -36,12 +37,13 @@ def dataThread(connection) :
     	  strt=time.time()
     	  img = open("/dev/shm/mjpeg/cam.jpg",'r')
     	  while True:
-              strng = img.readline(512)
+              strng = img.readline(65536)
               if not strng:
                   break
               connection.send(strng)
           img.close()
-	  connection.send("end")
+	  connection.sendall("")
+	  connection.send("bye")
     	  print "Data sent successfully in ", time.time()-strt, "s"
        else :
           data=[1,1,1]

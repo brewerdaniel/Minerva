@@ -1,41 +1,36 @@
 #!/usr/bin/python
 # TCP client example
-import socket,os
+import socket,os,time
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect(("", 5005))
+client_socket.connect(("djb231.quns.cam.ac.uk", 12345))
 k = ' '
 size = 1024
 
-while(1):
-    print "Do you want to transfer a \n1.Text File\n2.Image\n3.Video\n"
-    k = raw_input()
-    client_socket.send(k)
-    k = int (k)
-    if(k == 1):
-        print "Enter file name\n"
-        strng = raw_input()
-        client_socket.send(strng)
-        size = client_socket.recv(1024)
-        size = int(size)
-        print "The file size is - ",size," bytes"
-        size = size*2
-        strng = client_socket.recv(size)
-        print "\nThe contents of that file - "
-        print strng
+iter=0
 
-    if (k==2 or k==3):
-        print "Enter file name of the image with extentsion (example: filename.jpg,filename.png or if a video file then filename.mpg etc) - "
-        fname = raw_input()
-        client_socket.send(fname)
-        fname = 'documents/'+fname
-        fp = open(fname,'w')
-        while True:
-            strng = client_socket.recv(512)
-            if not strng:
-                break
-            fp.write(strng)
-        fp.close()
-        print "Data Received successfully"
-        exit()
-        #data = 'viewnior '+fname
-        #os.system(data)
+#while(1):
+def transfer(filename) :
+    iter = 0
+    client_socket.send("cam")
+    fp = open(filename,'w')
+    while True:
+        strng = client_socket.recv(512)
+	#print strng
+        if (strng=="end"):
+            break
+            print "hmmm"	
+        fp.write(strng)
+	iter+=1
+
+    fp.close()
+    print "Data Received successfully"
+
+
+strt=time.time()
+for i in range(1,10) :
+    transfer("./test"+str(i)+".jpg")
+
+print time.time()-strt
+
+#data = 'viewnior '+fname
+#os.system(data)

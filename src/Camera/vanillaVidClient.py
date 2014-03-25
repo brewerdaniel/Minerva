@@ -4,33 +4,30 @@ import socket,os,time
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect(("djb231.quns.cam.ac.uk", 12345))
 k = ' '
-size = 1024
-
+size = 65536
 iter=0
 
-#while(1):
 def transfer(filename) :
     iter = 0
     client_socket.send("cam")
     fp = open(filename,'w')
     while True:
-        strng = client_socket.recv(512)
-	#print strng
-        if (strng=="end"):
+        strng = client_socket.recv(size)
+        if not strng[-3:]=='end' :
+            fp.write(strng)
+	else :
+            strng = strng[:-3]
+            fp.write(strng)
+            fp.close()
             break
-            print "hmmm"	
-        fp.write(strng)
-	iter+=1
 
-    fp.close()
     print "Data Received successfully"
 
 
 strt=time.time()
-for i in range(1,10) :
+i=1
+while (time.time()-strt<=1) :
     transfer("./test"+str(i)+".jpg")
+    i+=1
 
-print time.time()-strt
-
-#data = 'viewnior '+fname
-#os.system(data)
+print "FPS: ", i

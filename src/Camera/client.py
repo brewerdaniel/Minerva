@@ -26,4 +26,5 @@ while (time.time()-strt<=1) :
     transfer("./test"+str(i)+".jpg")
     i+=1
 
+client_socket.shutdown(1)
 print "FPS: ", i

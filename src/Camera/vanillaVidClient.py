@@ -1,25 +1,36 @@
 #!/usr/bin/python
 # TCP client example
-import socket,os,sys
+import socket,os,time
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect(("10.0.1.8", 12345))
+client_socket.connect(("djb231.quns.cam.ac.uk", 12345))
 k = ' '
 size = 1024
+
 iter=0
-for i in range(10) :
+
+#while(1):
+def transfer(filename) :
+    iter = 0
     client_socket.send("cam")
-    fp = open("test"+str(i)+".jpg",'w')
-    while True :
+    fp = open(filename,'w')
+    while True:
         strng = client_socket.recv(512)
-	print strng
-        if not strng:
-	    print "Breaking... ", strng
+	#print strng
+        if (strng=="end"):
             break
+            print "hmmm"	
         fp.write(strng)
-        print "A line"
-    print "Does it get to here?"
+	iter+=1
+
     fp.close()
     print "Data Received successfully"
-sys.exit()
+
+
+strt=time.time()
+for i in range(1,10) :
+    transfer("./test"+str(i)+".jpg")
+
+print time.time()-strt
+
 #data = 'viewnior '+fname
 #os.system(data)

@@ -22,8 +22,8 @@ def transfer(filename) :
 
 strt=time.time()
 i=1
-while (time.time()-strt<=1) :
-    transfer("./test"+str(i)+".jpg")
+while (time.time()-strt<=1000) :
+    transfer("/tmp/cam.jpg")
     i+=1
 
 client_socket.shutdown(1)

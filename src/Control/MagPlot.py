@@ -18,13 +18,17 @@ host = 'djb231.quns.cam.ac.uk'
 port = 12345                # Reserve a port for your service.
 s.connect((host, port))
 
+<<<<<<< HEAD:src/MagPlot.py
 iter=0
+=======
+>>>>>>> 3636f72200cfe3d7aedbc625dcf2328ba34345ce:src/Control/MagPlot.py
 
 def netRec() :
   s.send("mag")
   data = s.recv(1024)
   return struct.unpack('f'*(len(data)/4), data)
 
+<<<<<<< HEAD:src/MagPlot.py
 averageHeading=netRec()
 
 def update_lines(num, axes) :
@@ -42,7 +46,29 @@ def update_lines(num, axes) :
 
   print vals
   print "************************"
+=======
+
+average=[0,0,0]
+averageNumber=8
+print "Calibration:"
+for i in range(averageNumber) :
+  print "Position ",i+1
+  data = np.array(netRec())
+  average+=data
+  #average[0]+=data[0]
+  #average[1]+=data[1]
+  #average[2]+=data[2]
+  raw_input()
+
+average=np.array(average)/averageNumber
+print average
+
+def update_lines(num, axes) :
+  vals = netRec()
+  vals-=average
+>>>>>>> 3636f72200cfe3d7aedbc625dcf2328ba34345ce:src/Control/MagPlot.py
   vals/=np.sqrt(np.dot(vals,vals))
+  print vals
   new_axes=[[vals[0],0,0],[0,vals[1],0],[0,0,vals[2]]]
 
   for line, axis in zip(axes, new_axes) :

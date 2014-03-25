@@ -8,7 +8,6 @@ size = 65536
 iter=0
 
 def transfer(filename) :
-    iter = 0
     client_socket.send("cam")
     fp = open(filename,'w')
     while True:
@@ -16,12 +15,9 @@ def transfer(filename) :
         if not strng[-3:]=='end' :
             fp.write(strng)
 	else :
-            strng = strng[:-3]
-            fp.write(strng)
+            fp.write(strng[:-3])
             fp.close()
             break
-
-    print "Data Received successfully"
 
 
 strt=time.time()

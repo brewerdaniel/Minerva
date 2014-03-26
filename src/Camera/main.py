@@ -51,7 +51,7 @@ class PicturesApp(App):
             #buttonStart = Button(text='Start', font_size=14)
             #buttonStop = Button(text='Stop', font_size=14)
             #buttonStart.bind(on_press=update)
-            Clock.schedule_interval(self.update, 1.0 / 3.0)
+            Clock.schedule_once(self.update)
 
         except Exception, e:
 	    print 'Shit'
@@ -59,11 +59,12 @@ class PicturesApp(App):
 
     def update(self, img) :
         try :
-            if not self.alreadyUpdating :
-                self.alreadyUpdating=True
-                self.transfer()
-                self.wimg.reload()
-                self.alreadyUpdating=False
+            #if not self.alreadyUpdating :
+            #self.alreadyUpdating=True
+            self.transfer()
+            self.wimg.reload()
+	    Clock.schedule_once(self.update)
+            #self.alreadyUpdating=False
 
         except Exception, e :
             print "I wonder what causes this..."

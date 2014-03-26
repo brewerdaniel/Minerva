@@ -12,6 +12,7 @@ from kivy.app import App
 from kivy.uix.image import Image
 from kivy.uix.button import Button
 from kivy.core.window import Window
+from kivy.clock import Clock
 
 
 import socket,os,time
@@ -36,31 +37,31 @@ class PicturesApp(App):
                 break
 	return filename
 
-
-    def update(self) :
-        #while True :
-        for i in range(10) :
-            print 'hey'
-            #sleep(0.5)
-            self.transfer()
-            #wimg.reload()
-
-
-
     def build(self):
-
+        print "build()"
         # the root is created in pictures.kv
         root = self.root
 
         try :
-	    wimg = Image(source=self.transfer())
-	    root.add_widget(wimg)
-	    btn1 = Button(text='Update')
-	    btn1.bind(on_press=update)
-	    root.add_widget(btn1)	
+	    self.wimg = Image(source=self.transfer())
+            root.add_widget(self.wimg)
+            
+            #buttonStart = Button(text='Start', font_size=14)
+            #buttonStop = Button(text='Stop', font_size=14)
+            #buttonStart.bind(on_press=update)
+            Clock.schedule_interval(self.update, 1.0 / 2.0)
 
         except Exception, e:
 	    print 'Shit'
+
+
+    def update(self, img) :
+        try :
+            self.transfer()
+            self.wimg.reload()
+        #self.root.add_widget(self.wimg)
+        except Exception, e :
+            print "I wonder what causes this..."
 
 if __name__ == '__main__':
     PicturesApp().run()

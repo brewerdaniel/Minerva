@@ -23,6 +23,8 @@ size = 65536
 
 class PicturesApp(App):
 
+    alreadyUpdating=False
+
     def transfer(self) :
 	filename="/tmp/cam.jpg"
         client_socket.send("cam")
@@ -49,7 +51,7 @@ class PicturesApp(App):
             #buttonStart = Button(text='Start', font_size=14)
             #buttonStop = Button(text='Stop', font_size=14)
             #buttonStart.bind(on_press=update)
-            Clock.schedule_interval(self.update, 1.0 / 2.0)
+            Clock.schedule_interval(self.update, 1.0 / 3.0)
 
         except Exception, e:
 	    print 'Shit'
@@ -57,12 +59,17 @@ class PicturesApp(App):
 
     def update(self, img) :
         try :
-            self.transfer()
-            self.wimg.reload()
-        #self.root.add_widget(self.wimg)
+            if not self.alreadyUpdating :
+                self.alreadyUpdating=True
+                self.transfer()
+                self.wimg.reload()
+                self.alreadyUpdating=False
+
         except Exception, e :
             print "I wonder what causes this..."
+            print e
 
 if __name__ == '__main__':
     PicturesApp().run()
+    client_socket.send("end")
     client_socket.shutdown(1)

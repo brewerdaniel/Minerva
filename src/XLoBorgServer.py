@@ -1,12 +1,8 @@
 #!/usr/bin/env python           # This file creates a python server for the XLoBorg interface
 
-import socket
-import struct
-import time
+import socket, struct, time, math, sys, os, XLoBorg
 from thread import *
-import math
-import sys
-import XLoBorg
+from subprocess import call
 
 # Initialise the XLoBorg library
 XLoBorg.printFunction = XLoBorg.NoPrint
@@ -14,6 +10,7 @@ XLoBorg.Init()
 
 # Initialise the socket
 s = socket.socket()
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 host = ''
 port = 12345
 
@@ -33,7 +30,7 @@ def dataThread(connection) :
     while True :
 
        client = connection.recv(1024)
-       if not client :
+       if not client or client=="end" :
           break
        elif client=="accel" :
           data = XLoBorg.ReadAccelerometer()
@@ -59,15 +56,28 @@ def dataThread(connection) :
           data+=XLoBorg.ReadTemperature()
           data/=3.0
           buf = struct.pack('f', *data)
+       elif client=="cam" :
+          img = open("/dev/shm/mjpeg/cam.jpg",'r')
+    	  while True:
+             strng = img.readline(65536)
+             if not strng:
+                break
+             connection.send(strng)
+          img.close()
+             
+          buf = "end"
        else :
-          data=[1,1,1]
-          buf = struct.pack('f'*len(data), *data)
+          buf = "end"
 
        connection.sendall(buf)
        
     # Exit loop
     connection.close()
 
+directory="/dev/shm/mjpeg/"
+if not os.path.exists(directory):
+    os.makedirs(directory)
+call("sudo raspimjpeg -ic 0 -vc 0 > /dev/null &", shell=True)
 while True:
    c, addr = s.accept()     # Establish connection with client.
    start_new_thread(dataThread,(c,))

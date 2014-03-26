@@ -25,7 +25,9 @@ def transfer(filename) :
 strt=time.time()
 i=1
 while (time.time()-strt<=10) :
-    transfer("cam.jpg")
+    transfer("/tmp/cam.jpg")
     i+=1
 
+client_socket.send("end")
+client_socket.close()
 print "FPS: ", i

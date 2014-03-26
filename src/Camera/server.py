@@ -1,11 +1,8 @@
-#!/usr/bin/env python           # This file creates a python server for the XLoBorg interface
+#!/usr/bin/env python
 
-import socket
-import struct
-import time
+import socket, struct, time, math, sys
 from thread import *
-import math
-import sys
+from subprocess import call
 
 # Initialise the socket
 s = socket.socket()
@@ -22,19 +19,19 @@ except socket.error , msg:
 
 # Await connection.
 s.listen(5)
+number_of_connections=0
 
 print "\nNow listening on port", port
 
 def dataThread(connection) :
+    global number_of_connections
+    number_of_connections+=1
     while True :
 
        client = connection.recv(1024)
        if not client :
           break
        elif client=="cam" :
-    	  print "The following data was received - ",client
-    	  print "Opening file - ",client
-    	  strt=time.time()
     	  img = open("/dev/shm/mjpeg/cam.jpg",'r')
     	  while True:
               strng = img.readline(65536)
@@ -42,20 +39,18 @@ def dataThread(connection) :
                   break
               connection.send(strng)
           img.close()
-	  connection.sendall("")
-	  connection.send("bye")
-    	  print "Data sent successfully in ", time.time()-strt, "s"
-       else :
-          data=[1,1,1]
-          buf = struct.pack('f'*len(data), *data)
 
        connection.sendall("end")
        
     # Exit loop
     connection.close()
+    number_of_connections-=1
 
+
+call("sudo raspimjpeg -w 640 -h 360 -wp 512 -hp 384 -d 1 -q 25 -of /dev/shm/mjpeg/cam.jpg &", shell=True)
 while True:
    c, addr = s.accept()     # Establish connection with client.
    start_new_thread(dataThread,(c,))
-   
+   print number_of_connections   
+
 s.close()                # Close the connection

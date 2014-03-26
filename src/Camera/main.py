@@ -49,7 +49,7 @@ class PicturesApp(App):
             #buttonStart = Button(text='Start', font_size=14)
             #buttonStop = Button(text='Stop', font_size=14)
             #buttonStart.bind(on_press=update)
-            Clock.schedule_interval(self.update, 1.0 / 5.0)
+            Clock.schedule_interval(self.update, 1.0 / 2.0)
 
         except Exception, e:
 	    print 'Shit'

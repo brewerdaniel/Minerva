@@ -18,23 +18,21 @@
 import sys
 import math
 
-
 #
 # Matrix code snarfed from: http://www.hlevkin.com/NumAlg/LinearEquations.c
 # 
 #==============================================================================
-#return 1 if system
-not solving
-		# nDim - system dimension
-		# pfMatr - matrix with coefficients
-		# pfVect - vector with free members
-		# pfSolution - vector with system solution
-		# pfMatr becames trianglular after function call
-		# pfVect changes after function call
-		#
+#return 1 if system not solving
+# nDim - system dimension
+# pfMatr - matrix with coefficients
+# pfVect - vector with free members
+# pfSolution - vector with system solution
+# pfMatr becames trianglular after function call
+# pfVect changes after function call
+#
 #Developer:    Henry Guennadi Levkin
-		#
-		#==============================================================================
+#
+#==============================================================================
 
 
 

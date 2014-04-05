@@ -16,8 +16,6 @@
 import sys
 import math
 import numpy as np
-import socket
-import struct
 
 #==============================================================================
 # return 1 if system not solving
@@ -43,14 +41,6 @@ import struct
 # 
 # A = (c - O)/s
 #
-
-def init() :
-    s = socket.socket()         # Create a socket object 
-    host = 'djb231.quns.cam.ac.uk'
-    port = 12345                # Reserve a port for your service.
-    s.connect((host, port))
-    Sens = np.zeros(3)
-    Offset = np.zeros(3)
 
 def cal(x, y, z, S, O) :
     A = np.zeros(25).reshape((5, 5))
@@ -78,45 +68,51 @@ def cal(x, y, z, S, O) :
     S[2] = np.sqrt(S[0] * S[0] / k2)
     return 0
 
-def netRec() :
-    total = np.zeros(3)
-    s.send("mag")
-    data = s.recv(128)
-    total += np.array(struct.unpack('f'*(len(data)/4), data))
-    s.send("mag")
-    data = s.recv(128)
-    total += np.array(struct.unpack('f'*(len(data)/4), data))
-    s.send("mag")
-    data = s.recv(128)
-    total += np.array(struct.unpack('f'*(len(data)/4), data))
-    
-    return total/3
+#
+# Test data 
+# 
 
-def magCali() :
-    mX, mY, mZ = netRec()
+X1 = np.array([2021, 2424, 2008, 1606, 1950, 2032])
+Y1 = np.array([2439, 2028, 1612, 2021, 2025, 1979])
+Z1 = np.array([2064, 2059, 2038, 2046, 1622, 2437])
+X2 = np.array([-30, -748, 112, 746, 548, -440])
+Y2 = np.array([-783, 105, 815, 119, 93, 205])
+Z2 = np.array([370, 432, 387, -421, 680, -651])
 
-    X = np.array([mX/2, -748, 112, 746, 548, -440])
-    Y = np.array([mY/2, 105, 815, 119, 93, 205])
-    Z = np.array([mZ/2, 432, 387, -421, 680, -651])
+#
+# Simple test of calibration code. Compute the calibration values
+# for each series and then process each data point.
+#
+
+Sens = np.zeros(3)
+Offset = np.zeros(3)
+
+if cal (X1, Y1, Z1, Sens, Offset) == 0:
+    print(" X       Y       Z")
+    print("Sens:   %10.5f %10.5f %10.5f" % (Sens[0], Sens[1], Sens[2]))
+    print("Offset: %10.5f %10.5f %10.5f" % (Offset[0], Offset[1], Offset[2]))
     
-    
-    if cal (X, Y, Z, Sens, Offset) == 0:
+    for i in range(6):
+        x = (X1[i]-Offset[0])/Sens[0]
+        y = (Y1[i]-Offset[1])/Sens[1]
+        z = (Z1[i]-Offset[2])/Sens[2]
         
-        x = (X[0]-Offset[0])/Sens[0]
-        y = (Y[0]-Offset[1])/Sens[1]
-        z = (Z[0]-Offset[2])/Sens[2]
-        
-        return np.array([x, y, z])
-        #print("%7.2f %7.2f %7.2f" % (x,y,z))
-        #
-        #print("%7.2f %7.2f %7.2f %10f" % (np.arccos (x) * 180/np.pi,
-        #                              np.arccos (y) * 180/np.pi,
-        #                              np.arccos (z) * 180/np.pi,
-        #                                  np.sqrt(x*x + y*y + z*z)))
+        print("%7.2f %7.2f %7.2f %10f" % (np.arccos (x) * 180/np.pi,
+                                            np.arccos (y) * 180/np.pi,
+                                            np.arccos (z) * 180/np.pi,
+                                            np.sqrt(x*x + y*y + z*z)))
 
-    else :
-        return np.zeros(3)
+if cal (X2, Y2, Z2, Sens, Offset) == 0:
+    print(" X       Y       Z")
+    print("Sens:   %10.5f %10.5f %10.5f" % (Sens[0], Sens[1], Sens[2]))
+    print("Offset: %10.5f %10.5f %10.5f" % (Offset[0], Offset[1], Offset[2]))
 
-def end() :
-    s.send("")
-    s.close
+    for i in range(6):
+        x = (X2[i]-Offset[0])/Sens[0]
+        y = (Y2[i]-Offset[1])/Sens[1]
+        z = (Z2[i]-Offset[2])/Sens[2]
+
+        print("%7.2f %7.2f %7.2f %10f" % (np.arccos (x) * 180/np.pi,
+                                            np.arccos (y) * 180/np.pi,
+                                            np.arccos (z) * 180/np.pi,
+                                            np.sqrt (x*x + y*y + z*z)))

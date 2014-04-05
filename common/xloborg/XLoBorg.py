@@ -176,6 +176,8 @@ Initialises the compass on bus to default states
     data  = (1 << 7)            # Reset before each acquisition
     data |= (1 << 5)            # Raw mode, do not apply user offsets
     data |= (0 << 5)            # Disable reset cycle
+
+    print data
     try:
         bus.write_byte_data(addressCompass, register, data)
     except:

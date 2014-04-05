@@ -84,9 +84,9 @@ def netRec() :
 def magCali() :
     mX, mY, mZ = netRec()
 
-    X = np.array([mX/2, -748, 112, 746, 548, -440])
-    Y = np.array([mY/2, 105, 815, 119, 93, 205])
-    Z = np.array([mZ/2, 432, 387, -421, 680, -651])
+    X = np.array([mX, -670, -1074, -773, -221, -623])
+    Y = np.array([mY, 746, 633, 1094, 706, 199])
+    Z = np.array([mZ, 968, 1271, 1512, 1594, 1334])
     
     
     if not cal(X, Y, Z, Sens, Offset) :

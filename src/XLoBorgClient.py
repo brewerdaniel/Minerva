@@ -8,6 +8,7 @@ host = 'djb231.quns.cam.ac.uk'#socket.gethostname() # Get local machine name
 port = 12345                # Reserve a port for your service
 s.connect((host, port))
 for x in range(1000) :
+    raw_input()
     s.send("accel")
     data=s.recv(1024)
     accel=struct.unpack('f'*(len(data)/4), data)

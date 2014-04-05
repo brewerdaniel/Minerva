@@ -109,7 +109,7 @@ if cal (X1, Y1, Z1, Sens, Offset) == 0:
     y = (Y1[0]-Offset[1])/Sens[1]
     z = (Z1[0]-Offset[2])/Sens[2]
     
-    print("%7.2f %7.2f %7.2f" % x,y,z)
+    print("%7.2f %7.2f %7.2f" % (x,y,z))
 
     print("%7.2f %7.2f %7.2f %10f" % (np.arccos (x) * 180/np.pi,
                                       np.arccos (y) * 180/np.pi,

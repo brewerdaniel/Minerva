@@ -19,16 +19,6 @@ import numpy as np
 import socket
 import struct
 
-#==============================================================================
-# return 1 if system not solving
-# nDim - system dimension
-# pfMatr - matrix with coefficients
-# pfVect - vector with free members
-# pfSolution - vector with system solution
-# pfMatr becames trianglular after function call
-# pfVect changes after function call
-#==============================================================================
-#
 # x, y, z are vectors of six measurements
 # 
 # Computes sensitivity and offset such that:
@@ -99,19 +89,10 @@ def magCali() :
     Z = np.array([mZ/2, 432, 387, -421, 680, -651])
     
     
-    if cal (X, Y, Z, Sens, Offset) == 0:
-        
-        x = (X[0]-Offset[0])/Sens[0]
-        y = (Y[0]-Offset[1])/Sens[1]
-        z = (Z[0]-Offset[2])/Sens[2]
-        
-        return np.array([x, y, z])
-        #print("%7.2f %7.2f %7.2f" % (x,y,z))
-        #
-        #print("%7.2f %7.2f %7.2f %10f" % (np.arccos (x) * 180/np.pi,
-        #                              np.arccos (y) * 180/np.pi,
-        #                              np.arccos (z) * 180/np.pi,
-        #                                  np.sqrt(x*x + y*y + z*z)))
+    if not cal(X, Y, Z, Sens, Offset) :
+        return np.array([(X[0]-Offset[0])/Sens[0],
+                         (Y[0]-Offset[1])/Sens[1],
+                         (Z[0]-Offset[2])/Sens[2]])
 
     else :
         return np.zeros(3)

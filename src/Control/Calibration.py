@@ -85,12 +85,12 @@ def cal(x, y, z, S, O) :
 mX, mY, mZ =  XLoBorg.ReadCompassRaw()
 
 
-X1 = np.array([np.fabs(mX), 2424, 2008, 1606, 1950, 2032])
-Y1 = np.array([np.fabs(mY), 2028, 1612, 2021, 2025, 1979])
-Z1 = np.array([np.fabs(mZ), 2059, 2038, 2046, 1622, 2437])
-X2 = np.array([-30, -748, 112, 746, 548, -440])
-Y2 = np.array([-783, 105, 815, 119, 93, 205])
-Z2 = np.array([370, 432, 387, -421, 680, -651])
+#X1 = np.array([np.fabs(mX), 2424, 2008, 1606, 1950, 2032])
+#Y1 = np.array([np.fabs(mY), 2028, 1612, 2021, 2025, 1979])
+#Z1 = np.array([np.fabs(mZ), 2059, 2038, 2046, 1622, 2437])
+X1 = np.array([np.fabs(mX), -748, 112, 746, 548, -440])
+Y1 = np.array([np.fabs(mY), 105, 815, 119, 93, 205])
+Z1 = np.array([np.fabs(mZ), 432, 387, -421, 680, -651])
 
 #
 # Simple test of calibration code. Compute the calibration values

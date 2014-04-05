@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #
 # Automatic 3 axis calibration.
 # 
@@ -15,6 +16,15 @@
 import sys
 import math
 import numpy as np
+
+# Load the XLoBorg library
+import XLoBorg
+
+# Tell the library to disable diagnostic printouts
+XLoBorg.printFunction = XLoBorg.NoPrint
+
+# Start the XLoBorg module (sets up devices)
+XLoBorg.Init()
 
 #==============================================================================
 # return 1 if system not solving
@@ -71,47 +81,35 @@ def cal(x, y, z, S, O) :
 # Test data 
 # 
 
-X1 = ( 2021, 2424, 2008, 1606, 1950, 2032 )
-Y1 = ( 2439, 2028, 1612, 2021, 2025, 1979 )
-Z1 = ( 2064, 2059, 2038, 2046, 1622, 2437 )
-X2 = ( -30, -748, 112, 746, 548, -440 )
-Y2 = ( -783, 105, 815, 119, 93, 205 )
-Z2 = ( 370, 432, 387, -421, 680, -651 )
+
+mX, mY, mZ =  XLoBorg.ReadCompassRaw()
+
+
+X1 = np.array([mX, 2424, 2008, 1606, 1950, 2032])
+Y1 = np.array([mY, 2028, 1612, 2021, 2025, 1979])
+Z1 = np.array([mZ, 2059, 2038, 2046, 1622, 2437])
+X2 = np.array([-30, -748, 112, 746, 548, -440])
+Y2 = np.array([-783, 105, 815, 119, 93, 205])
+Z2 = np.array([370, 432, 387, -421, 680, -651])
 
 #
 # Simple test of calibration code. Compute the calibration values
 # for each series and then process each data point.
 #
 
+
+
+
 Sens = np.zeros(3)
 Offset = np.zeros(3)
 
 if cal (X1, Y1, Z1, Sens, Offset) == 0:
-    print(" X       Y       Z")
-    print("Sens:   %10.5f %10.5f %10.5f" % (Sens[0], Sens[1], Sens[2]))
-    print("Offset: %10.5f %10.5f %10.5f" % (Offset[0], Offset[1], Offset[2]))
     
-    for i in range(6):
-        x = (X1[i]-Offset[0])/Sens[0]
-        y = (Y1[i]-Offset[1])/Sens[1]
-        z = (Z1[i]-Offset[2])/Sens[2]
-        
-        print("%7.2f %7.2f %7.2f %10f" % (np.arccos (x) * 180/np.pi,
-                                            np.arccos (y) * 180/np.pi,
-                                            np.arccos (z) * 180/np.pi,
-                                            np.sqrt(x*x + y*y + z*z)))
-
-if cal (X2, Y2, Z2, Sens, Offset) == 0:
-    print(" X       Y       Z")
-    print("Sens:   %10.5f %10.5f %10.5f" % (Sens[0], Sens[1], Sens[2]))
-    print("Offset: %10.5f %10.5f %10.5f" % (Offset[0], Offset[1], Offset[2]))
-
-    for i in range(6):
-        x = (X2[i]-Offset[0])/Sens[0]
-        y = (Y2[i]-Offset[1])/Sens[1]
-        z = (Z2[i]-Offset[2])/Sens[2]
-
-        print("%7.2f %7.2f %7.2f %10f" % (np.arccos (x) * 180/np.pi,
-                                            np.arccos (y) * 180/np.pi,
-                                            np.arccos (z) * 180/np.pi,
-                                            np.sqrt (x*x + y*y + z*z)))
+    x = (X1[0]-Offset[0])/Sens[0]
+    y = (Y1[0]-Offset[1])/Sens[1]
+    z = (Z1[0]-Offset[2])/Sens[2]
+    
+    print("%7.2f %7.2f %7.2f %10f" % (np.arccos (x) * 180/np.pi,
+                                      np.arccos (y) * 180/np.pi,
+                                      np.arccos (z) * 180/np.pi,
+                                      np.sqrt(x*x + y*y + z*z)))

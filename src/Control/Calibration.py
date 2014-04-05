@@ -44,13 +44,12 @@ import struct
 # A = (c - O)/s
 #
 
-def init() :
-    s = socket.socket()         # Create a socket object 
-    host = 'djb231.quns.cam.ac.uk'
-    port = 12345                # Reserve a port for your service.
-    s.connect((host, port))
-    Sens = np.zeros(3)
-    Offset = np.zeros(3)
+s = socket.socket()         # Create a socket object 
+host = 'djb231.quns.cam.ac.uk'
+port = 12345                # Reserve a port for your service.
+s.connect((host, port))
+Sens = np.zeros(3)
+Offset = np.zeros(3)
 
 def cal(x, y, z, S, O) :
     A = np.zeros(25).reshape((5, 5))

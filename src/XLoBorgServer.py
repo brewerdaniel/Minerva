@@ -9,10 +9,10 @@ XLoBorg.printFunction = XLoBorg.NoPrint
 XLoBorg.Init()
 
 # Initialise the socket
-s = socket.socket()
-s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-host = ''
-port = 12345
+#s = socket.socket()
+#s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+#host = ''
+broadcastPort = 9038
 
 # Try to bind the port to the process
 try:

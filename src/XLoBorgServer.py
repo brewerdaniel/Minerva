@@ -1,6 +1,6 @@
 #!/usr/bin/env python           # This file creates a python server for the XLoBorg interface
 
-import socket, struct, time, math, sys, os, XLoBorg
+import socket, struct, time, math, sys, os, XLoBorg, re
 from thread import *
 from subprocess import call
 
@@ -56,6 +56,16 @@ def dataThread(connection) :
           data+=XLoBorg.ReadTemperature()
           data/=3.0
           buf = struct.pack('f', *data)
+       elif client=="CPUtemp" :
+          PUProcess = Popen(["cat","/sys/class/thermal/thermal_zone0/temp"],stdout=subprocess.PIPE)
+          GPUProcess = Popen(["/opt/vc/bin/vcgencmd","measure_temp"],stdout=subprocess.PIPE)
+          CPU, err = CPUProcess.communicate()
+          GPU, err = GPUProcess.communicate()
+          CPU = float(CPU)
+          CPU /= 1000
+          GPU = float(re.findall("\d+.\d+", GPU)[0])
+          data=[CPU,GPU]
+          buf = struct.pack('f*2', *data)
        elif client=="cam" :
           img = open("/dev/shm/mjpeg/cam.jpg",'r')
     	  while True:

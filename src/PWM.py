@@ -12,11 +12,11 @@ XLoBorg.Init()
 
 GPIO.setmode(GPIO.BCM)  # choose BCM or BOARD numbering schemes. I use BCM
 
-GPIO.setup(18, GPIO.OUT)
-GPIO.setup(17, GPIO.OUT)# set GPIO 17 as output
+GPIO.setup(17, GPIO.OUT)
+GPIO.setup(22, GPIO.OUT)# set GPIO 17 as output
 
-xAxis = GPIO.PWM(18, 60)    # create PWM on port 25 at 100 Hertz
-yAxis = GPIO.PWM(17, 60)    # create PWM on port 25 at 100 Hertz
+xAxis = GPIO.PWM(17, 60)    # create PWM on port 25 at 100 Hertz
+yAxis = GPIO.PWM(22, 60)    # create PWM on port 25 at 100 Hertz
 
 
 xAxis.start(0)              # start white led on 0 percent duty cycle (off)

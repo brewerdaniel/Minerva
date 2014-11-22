@@ -2,5 +2,5 @@
 Minerva
 =======
 
-Quadrocopter
+Quadcopter
 

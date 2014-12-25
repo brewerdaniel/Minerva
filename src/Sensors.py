@@ -1,23 +1,28 @@
 # The sensors class for Minerva
 #
 # This class should interface all sorts of things
-import socket, struct, time, math, sys, os, XLoBorg, re, RPi.GPIO
+import socket, struct, time, math, sys, os, XLoBorg, re
+import RPi.GPIO as GPIO
+import numpy as np
 from thread import *
 from subprocess import call
 
 class MinervaSensors(object) :
     def __init__(self) :
         # Initialise the XLoBorg library
-        XLoBorg.printFunction = XLoBorg.NoPrint
-        XLoBorg.Init()
+        try :
+            XLoBorg.printFunction = XLoBorg.NoPrint
+            XLoBorg.Init()
 
-        # Initialise the GPIO interface
-        GPIO.setmode(GPIO.BCM)
-        TRIG = 23 
-        ECHO = 24
-        GPIO.setup(TRIG,GPIO.OUT)
-        GPIO.setup(ECHO,GPIO.IN)
+            # Initialise the GPIO interface
+            GPIO.setmode(GPIO.BCM)
+            TRIG = 23 
+            ECHO = 24
+            GPIO.setup(TRIG,GPIO.OUT)
+            GPIO.setup(ECHO,GPIO.IN)
 
+        except:
+            print "Whoops!"
 
     def accel(self) :
         accel = XLoBorg.ReadAccelerometer()
@@ -44,7 +49,7 @@ class MinervaSensors(object) :
         g = 9.81
         
         # hard iron estimate
-        Vx, Vy, Vz = (0.0, 0.0, 0.0);
+        Vx, Vy, Vz = (-641.103, 697.397, 0.0);
         
         # tilt-compensated e-Compass code
         Ax, Ay, Az = A
@@ -59,13 +64,13 @@ class MinervaSensors(object) :
         Mz -= Vz    # see Eq 16
         
         # calculate current roll angle
-        roll = atan2(Ay, Az)    # Eq 13
-        roll_d = 180*roll/pi
+        roll = math.atan2(Ay, Az)    # Eq 13
+        roll_d = 180*roll/math.pi
         print roll_d
     
         # calculate sin and cosine of roll angle Phi
-        sin_roll = sin(roll)    # Eq 13: sin = opposite / hypotenuse
-        cos_roll = cos(roll)    # Eq 13: cos = adjacent / hypotenuse
+        sin_roll = math.sin(roll)    # Eq 13: sin = opposite / hypotenuse
+        cos_roll = math.cos(roll)    # Eq 13: cos = adjacent / hypotenuse
         
         # de-rotate by roll angle Phi
         By = ((My * cos_roll - Mz * sin_roll))    # Eq 19 y component
@@ -73,8 +78,8 @@ class MinervaSensors(object) :
         Az = ((My * sin_roll + Mz * cos_roll))    # Eq 15 denominator
         
         # calculate current pitch angle Theta
-        pitch = atan2(-Ax, Az)    # Eq 15
-        pitch_d = 180*pitch/pi
+        pitch = math.atan2(-Ax, Az)    # Eq 15
+        pitch_d = 180*pitch/math.pi
         print pitch_d
     
         # restrict pitch angle to range -90 to 90 degrees
@@ -84,8 +89,8 @@ class MinervaSensors(object) :
             pitch_d = (-180 - pitch_d)
                 
         # calculate sin and cosine of pitch angle Theta
-        sin_pitch = sin(pitch)    # Eq 15: sin = opposite / hypotenuse
-        cos_pitch = cos(pitch)    # Eq 15: cos = adjacent / hypotenuse
+        sin_pitch = math.sin(pitch)    # Eq 15: sin = opposite / hypotenuse
+        cos_pitch = math.cos(pitch)    # Eq 15: cos = adjacent / hypotenuse
         
         # correct cosine if pitch not in range -90 to 90 degrees
         if (cos_pitch < 0) :
@@ -96,8 +101,8 @@ class MinervaSensors(object) :
         Bz = (-Mx * sin_pitch + Mz * cos_pitch)    # Eq 19: z component
         
         # calculate current yaw = e-compass angle Psi
-        yaw = atan2(-By, Bx)  # Eq 22
-        yaw_d = 180*yaw/pi
+        yaw = math.atan2(-By, Bx)  # Eq 22
+        yaw_d = 180*yaw/math.pi
         print yaw_d
         
         return yaw_d

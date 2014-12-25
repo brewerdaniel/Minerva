@@ -66,28 +66,12 @@ def dataThread(connection) :
           GPU = float(re.findall("\d+.\d+", GPU)[0])
           data=[CPU,GPU]
           buf = struct.pack('f*2', *data)
-       elif client=="cam" :
-          img = open("/dev/shm/mjpeg/cam.jpg",'r')
-    	  while True:
-             strng = img.readline(65536)
-             if not strng:
-                break
-             connection.send(strng)
-          img.close()
-             
-          buf = "end"
-       else :
-          buf = "end"
 
        connection.sendall(buf)
        
     # Exit loop
     connection.close()
 
-directory="/dev/shm/mjpeg/"
-if not os.path.exists(directory):
-    os.makedirs(directory)
-call("sudo raspimjpeg -ic 0 -vc 0 > /dev/null &", shell=True)
 while True:
    c, addr = s.accept()     # Establish connection with client.
    start_new_thread(dataThread,(c,))

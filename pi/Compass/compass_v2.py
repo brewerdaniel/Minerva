@@ -1,5 +1,4 @@
 
-
 # Initialise the XLoBorg library
 XLoBorg.printFunction = XLoBorg.NoPrint
 XLoBorg.Init()
@@ -8,6 +7,7 @@ scale=0.98
 
 x_offset = -618.954
 y_offset = 733.05
+
 
 #Calibration - obtaining hard iron offsets
 def calibrate():

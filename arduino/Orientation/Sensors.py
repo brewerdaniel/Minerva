@@ -1,46 +1,22 @@
 # The sensors class for Minerva
 #
 # This class should interface all sorts of things
-import socket, struct, time, math, sys, os, XLoBorg, re
+import time, math, sys, os, XLoBorg, re, threading
 import RPi.GPIO as GPIO
 import numpy as np
 from thread import *
 from subprocess import call
+from gps import *
 
-class MinervaSensors(object) :
+class Navigation(threading.Thread) :
     def __init__(self) :
         # Initialise the XLoBorg library
         try :
             XLoBorg.printFunction = XLoBorg.NoPrint
             XLoBorg.Init()
 
-            # Initialise the GPIO interface
-            GPIO.setmode(GPIO.BCM)
-            TRIG = 23 
-            ECHO = 24
-            GPIO.setup(TRIG,GPIO.OUT)
-            GPIO.setup(ECHO,GPIO.IN)
-
         except:
             print "Whoops!"
-
-    def accel(self) :
-        accel = XLoBorg.ReadAccelerometer()
-        time.sleep(0.0125)
-        accel =[x + y for x, y in zip(accel, XLoBorg.ReadAccelerometer())]
-        time.sleep(0.0125)
-        accel =[x + y for x, y in zip(accel, XLoBorg.ReadAccelerometer())]
-        accel =[x/3 for x in accel]
-        return accel
-
-    def mag(self) :
-        M = XLoBorg.ReadCompassRaw()
-        time.sleep(0.0125)
-        M =[x + y for x, y in zip(M, XLoBorg.ReadCompassRaw())]
-        time.sleep(0.0125)
-        M =[x + y for x, y in zip(M, XLoBorg.ReadCompassRaw())]
-        M =[x/3 for x in M]
-        return M
 
     def heading(self) :
         M = self.mag()

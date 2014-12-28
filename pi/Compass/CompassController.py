@@ -1,4 +1,5 @@
 import time
+import timeit
 import threading
 import math
 import XLoBorg
@@ -19,21 +20,24 @@ class Heading():
         return self.radians
 
 class CompassController(threading.Thread):
+
     def __init__(self, frequency):
         threading.Thread.__init__(self)
 
-        self.x_offset = -618.954
-        self.y_offset = 733.05
-        self.z_offset = 1437.5
+        self.max_offsets = [-431, 819, 2000]
+        self.min_offsets = [-850, 432, 1000]
+        self.offset_calculations = 1
+        self.offset_sums = [-618, 733.00, 1437.00]
+        self.offsets = [-618, 733.00, 1437.00]
         self.timeInterval = 1.0/float(frequency)
         self.K = 0.98
 
          #update the heading
         data = XLoBorg.ReadCompassRaw()
         
-        x_out = data[0] - self.x_offset
-        y_out = data[1] - self.y_offset
-        z_out = data[2] - self.z_offset
+        x_out = data[0] - self.offsets[0]
+        y_out = data[1] - self.offsets[1]
+        z_out = data[2] - self.offsets[2]
         
         normal_x = x_out/math.sqrt(x_out**2 + y_out**2)
         normal_y = y_out/math.sqrt(x_out**2 + y_out**2)
@@ -74,16 +78,53 @@ class CompassController(threading.Thread):
             y_sum += data[1]
             time.sleep(0.1)
 
-        self.x_offset = x_sum/300.0
-        self.y_offset = y_sum/300.0
+        self.offsets[0] = x_sum/300.0
+        self.offsets[1] = y_sum/300.0
         self.running = True
 
-    def updateHeading(self):
-        data = XLoBorg.ReadCompassRaw()
+    def getReading(self):
+        Mx, My, Mz = XLoBorg.ReadCompassRaw()
+        
+        recalculate_offsets = False
+        
+        if (Mx > self.max_offsets[0]):
+            self.max_offsets[0] = Mx
+            recalculate_offsets = True
+        if (My > self.max_offsets[1]):
+            self.max_offsets[1] = My
+            recalculate_offsets = True
+        if (Mz > self.max_offsets[2]):
+            self.max_offsets[2] = Mz
+            recalculate_offsets = True
+            
+        if (Mx < self.min_offsets[0]):
+            self.min_offsets[0] = Mx
+            recalculate_offsets = True
+        if (My < self.min_offsets[1]):
+            self.min_offsets[1] = My
+            recalculate_offsets = True
+        if (Mz < self.min_offsets[2]):
+            self.min_offsets[2] = Mz
+            recalculate_offsets = True
+  
+        if (recalculate_offsets):
+            self.offset_calculations += 1
+            self.offsets[0] = (self.offset_sums[0] + (self.max_offsets[0] + self.min_offsets[0])/2)/self.offset_calculations
+            self.offset_sums[0] += (self.max_offsets[0] + self.min_offsets[0])/2
+            self.offsets[1] = (self.offset_sums[1] + (self.max_offsets[1] + self.min_offsets[1])/2)/self.offset_calculations
+            self.offset_sums[1] += (self.max_offsets[1] + self.min_offsets[1])/2
+            self.offsets[2] = (self.offset_sums[2] + (self.max_offsets[2] + self.min_offsets[2])/2)/self.offset_calculations
+            self.offset_sums[2] += (self.max_offsets[2] + self.min_offsets[2])/2
+            recalculate_offsets = False
+            
+        Mx -= self.offsets[0]
+        My -= self.offsets[1]
+        Mz -= self.offsets[2]
+        
+        return [Mx, My, Mz]
 
-        x_out = data[0] - self.x_offset
-        y_out = data[1] - self.y_offset
-        z_out = data[2] - self.z_offset
+    def updateHeading(self):
+        x_out, y_out, z_out = self.getReading()
         
         normal_x = x_out/math.sqrt(x_out**2 + y_out**2)
         normal_y = y_out/math.sqrt(x_out**2 + y_out**2)

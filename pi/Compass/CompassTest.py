@@ -8,7 +8,7 @@ if __name__ == "__main__":
         compasscontrol.start()
         while (True):
             print compasscontrol.heading.degrees
-            print compasscontrol.heading.radians
+            #print compasscontrol.heading.radians
             time.sleep(0.1)
             
     except KeyboardInterrupt:

@@ -125,14 +125,12 @@ def heading() :
     Bx = (Mx * cos_pitch + My * sin_pitch * sin_roll + Mz * sin_pitch * cos_roll)    # Eq 19: x component
     Bz = (-Mx * sin_pitch + My * cos_pitch * sin_roll + Mz * cos_pitch * cos_roll)    # Eq 19: z component
     
-    last_B[0] = K*last_B[0] + (K-1)*Bx
-    last_B[1] = K*last_B[1] + (K-1)*By
-
-    nBx = last_B[0]/math.sqrt(last_B[0]**2+last_B[1]**2)
-    nBy = last_B[1]/math.sqrt(last_B[0]**2+last_B[1]**2)
+    nBx = Bx/math.sqrt(Bx**2+By**2)
+    nBy = By/math.sqrt(Bx**2+By**2)
 
     # calculate current yaw = e-compass angle Psi
     bearing = math.atan2(-nBy, nBx)  # Eq 22
+    print bearing
     yaw_d = 180*bearing/math.pi
     print "{0:.4f} {1:.4f} {2:.4f} {3:.4f} {4:.1f}".format(-nBy, nBx, -By, Bx, yaw_d)
 

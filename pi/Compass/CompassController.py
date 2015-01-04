@@ -30,7 +30,7 @@ class CompassController(threading.Thread):
         self.offset_sums = [-618, 733.00, 1437.00]
         self.offsets = [-618, 733.00, 1437.00]
         self.timeInterval = 1.0/float(frequency)
-        self.K = 0.98
+        self.K = 0.5
 
          #update the heading
         data = XLoBorg.ReadCompassRaw()
@@ -42,13 +42,12 @@ class CompassController(threading.Thread):
         normal_x = x_out/math.sqrt(x_out**2 + y_out**2)
         normal_y = y_out/math.sqrt(x_out**2 + y_out**2)
         
-        self.bearing  = math.atan2(normal_y, normal_x) 
+        self.lastBearing = math.atan2(normal_y, normal_x) 
+        self.bearing = self.lastBearing
         if (self.bearing < 0):
             self.bearing += 2 * math.pi
 
-        self.lastBearing = self.bearing
-
-        self.heading = Heading(self.lastBearing)
+        self.heading = Heading(self.bearing)
 
         self.updateSuccess = True
        
@@ -129,13 +128,14 @@ class CompassController(threading.Thread):
         normal_x = x_out/math.sqrt(x_out**2 + y_out**2)
         normal_y = y_out/math.sqrt(x_out**2 + y_out**2)
         
-        self.bearing  = math.atan2(normal_y, normal_x) 
+        rawAngle = math.atan2(normal_y, normal_x)
+        self.bearing = rawAngle#self.K*self.lastBearing + (1-self.K)*rawAngle
+        self.lastBearing = self.bearing
+
         if (self.bearing < 0):
-            self.bearing += 2 * math.pi
+            self.bearing = 0#+= 2 * math.pi
 
-        self.lastBearing = self.K*self.lastBearing + (1-self.K)*self.bearing
-
-        self.heading = Heading(self.lastBearing)
+        self.heading = Heading(self.bearing)
 
         self.updateSuccess = True
 
